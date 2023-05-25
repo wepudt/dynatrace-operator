@@ -11,7 +11,7 @@
     {
       "fileMatch": [ "(^|/|\\.)prerequisites.mk$", "(^|/|\\.)third-party-licenses.sh$" ],
       "matchStrings": [
-        "depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*?_VERSION=(?<currentValue>.*)\\s"
+        "depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s.*?_version=(?<currentValue>.*)\\s"
       ],
       "datasourceTemplate": "go"
     }
