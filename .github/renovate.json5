@@ -6,6 +6,7 @@
   "labels": ["dependencies"],
   "digest": { "enabled": false },
   "enabledManagers": [ "regex", "dockerfile", "gomod", "github-actions" ],
+  "prHourlyLimit": 10,
   "regexManagers": [
     {
       "fileMatch": [ "(^|/|\\.)prerequisites.mk$", "(^|/|\\.)third-party-licenses.sh$" ],
