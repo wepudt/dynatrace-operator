@@ -1,5 +1,5 @@
 #!/bin/bash
-#renovate depName=sigs.k8s.io/kustomize/kustomize/v5
+#renovate depName=github.com/google/go-licenses
 golang_licenses_version=v1.6.0
 
 # get licenses if no cache exists
