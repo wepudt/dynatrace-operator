@@ -5,7 +5,7 @@ CONTROLLER_GEN_VERSION=v0.12.0
 # renovate depName=github.com/golangci/golangci-lint
 KUSTOMIZE_VERSION=v5.0.0
 # renovate depName=github.com/daixiang0/gci
-GCI_VERSION=v0.10.0
+GCI_VERSION=v0.10.1
 # renovate depName=golang.org/x/tools
 GOLANG_TOOLS_VERSION=v0.9.0
 
