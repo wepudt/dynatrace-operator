@@ -86,6 +86,8 @@ jobs:
       SCAN_REGISTRY: "quay.io"
     steps:
       - run: echo "noo this should not happen!"
+      - run: echo "${{ github.ref-name}}"
+      - run: echo "${{ !contains(github.ref-name, '-rc') }}"
 
   manifest:
     name: Create manifest
