@@ -60,7 +60,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        platform: [amd64, arm64, ppc64le]
+        platform: [amd64]
         registry: [gcr, dockerhub]
         include:
         - registry: gcr
@@ -69,7 +69,7 @@ jobs:
           username: GCR_USERNAME
           password: GCR_JSON_KEY
         - registry: dockerhub
-          url: docker.io
+          url: quay.io
           repository: DOCKERHUB_REPOSITORY
           username: DOCKERHUB_USERNAME
           password: DOCKERHUB_PASSWORD
