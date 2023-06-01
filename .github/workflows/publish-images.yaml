@@ -40,7 +40,7 @@ jobs:
     needs: [prepare]
     strategy:
       matrix:
-        platform: [amd64]
+        platform: [amd64, arm64, ppc64le]
     steps:
       - name: Checkout
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
@@ -60,7 +60,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        platform: [amd64]
+        platform: [amd64, arm64, ppc64le]
         registry: [gcr, dockerhub]
         include:
         - registry: gcr
@@ -69,14 +69,39 @@ jobs:
           username: GCR_USERNAME
           password: GCR_JSON_KEY
         - registry: dockerhub
-          url: quay.io
+          url: docker.io
           repository: DOCKERHUB_REPOSITORY
           username: DOCKERHUB_USERNAME
           password: DOCKERHUB_PASSWORD
     steps:
-      - run: echo "pushing ${{matrix.platform}} to ${{matrix.registry}}/${{matrix.repository}}"
-      - run: echo "${{ github.ref}}"
-      - run: echo "${{ !contains(github.ref, '-rc') }}"
+      - name: Checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - name: Login to Registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ matrix.url }}
+          username: ${{ secrets[matrix.username] }}
+          password: ${{ secrets[matrix.password] }}
+      - name: Push ${{matrix.platform}} to ${{matrix.registry}}
+        uses: ./.github/actions/upload-image
+        with:
+          platform: ${{ matrix.platform }}
+          labels: ${{ needs.prepare.outputs.labels }}
+          version: ${{ needs.prepare.outputs.version }}
+          registry: ${{ matrix.url }}
+          repository: ${{ secrets[matrix.repository] }}
+      - name: Get image digest
+        id: digest
+        env:
+          IMAGE: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}-${{ matrix.platform }}
+        run: |
+          hack/build/ci/get-image-digest.sh
+      - name: Sign image for ${{matrix.registry}}
+        uses: ./.github/actions/sign-image
+        with:
+          image: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}-${{ matrix.platform }}@${{steps.digest.outputs.digest}}
+          signing-key: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          signing-password: ${{ secrets.COSIGN_PASSWORD }}
 
   push-rhcc:
     name: Push amd64 image to RHCC
@@ -87,9 +112,32 @@ jobs:
     env:
       SCAN_REGISTRY: "quay.io"
     steps:
-      - run: echo "noo this should not happen!"
-      - run: echo "${{ github.ref}}"
-      - run: echo "${{ !contains(github.ref, '-rc') }}"
+      - name: Checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - name: Login to Registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ env.SCAN_REGISTRY }}
+          username: ${{ secrets.RHCC_USERNAME }}
+          password: ${{ secrets.RHCC_PASSWORD }}
+      - name: Push amd64 image to scan registry
+        uses: ./.github/actions/upload-image
+        with:
+          platform: "amd64"
+          labels: ${{ needs.prepare.outputs.labels }}
+          version: ${{ needs.prepare.outputs.version }}
+          registry: ${{ env.SCAN_REGISTRY }}
+          repository: ${{ secrets.RHCC_REPOSITORY }}
+          skip-platform-suffix: true
+      - name: Run preflight
+        uses: ./.github/actions/preflight
+        with:
+          version: ${{ needs.prepare.outputs.version }}
+          registry: ${{ env.SCAN_REGISTRY }}
+          repository: ${{ secrets.RHCC_REPOSITORY }}
+          report-name: "preflight.json"
+          redhat-project-id: ${{ secrets.REDHAT_PROJECT_ID }}
+          pyxis-api-token: ${{ secrets.PYXIS_API_TOKEN }}
 
   manifest:
     name: Create manifest
@@ -113,4 +161,24 @@ jobs:
             username: DOCKERHUB_USERNAME
             password: DOCKERHUB_PASSWORD
     steps:
-      - run: echo "this should happen again for ${{matrix.registry}}."
+      - name: Checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+      - name: Login to Registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # v2.1.0
+        with:
+          registry: ${{ matrix.url }}
+          username: ${{ secrets[matrix.username] }}
+          password: ${{ secrets[matrix.password] }}
+      - name: Create manifests for ${{matrix.registry}}
+        uses: ./.github/actions/create-manifests
+        with:
+          version: ${{ needs.prepare.outputs.version }}
+          registry: ${{ matrix.url }}
+          repository: ${{ secrets[matrix.repository] }}
+          combined: true
+      - name: Sign manifests for ${{matrix.registry}}
+        uses: ./.github/actions/sign-image
+        with:
+          image: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}
+          signing-key: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          signing-password: ${{ secrets.COSIGN_PASSWORD }}
