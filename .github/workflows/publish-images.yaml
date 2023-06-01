@@ -75,6 +75,8 @@ jobs:
           password: DOCKERHUB_PASSWORD
     steps:
       - run: echo "pushing ${{matrix.platform}} to ${{matrix.registry}}/${{matrix.repository}}"
+      - run: echo "${{ github.ref}}"
+      - run: echo "${{ !contains(github.ref, '-rc') }}"
 
   push-rhcc:
     name: Push amd64 image to RHCC
@@ -86,8 +88,8 @@ jobs:
       SCAN_REGISTRY: "quay.io"
     steps:
       - run: echo "noo this should not happen!"
-      - run: echo "${{ github.ref-name}}"
-      - run: echo "${{ !contains(github.ref-name, '-rc') }}"
+      - run: echo "${{ github.ref}}"
+      - run: echo "${{ !contains(github.ref, '-rc') }}"
 
   manifest:
     name: Create manifest
