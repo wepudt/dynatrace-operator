@@ -80,7 +80,7 @@ jobs:
 
   push-rhcc:
     name: Push amd64 image to RHCC
-    if: ${{ !contains(github.ref-name, '-rc') }}
+    if: ${{ !contains(github.ref, '-rc') }}
     environment: Release
     needs: [prepare, build]
     runs-on: ubuntu-latest
