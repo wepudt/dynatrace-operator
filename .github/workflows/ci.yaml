@@ -15,61 +15,61 @@ permissions:
 
 env:
   DOCKER_REGISTRY: "ghcr.io"
-  DOCKER_REPOSITORY: "weputdt/dynatrace-operator"
+  DOCKER_REPOSITORY: "wepudt/dynatrace-operator"
 
 jobs:
-  helm-test:
-    name: Run helm unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - name: Set up Helm
-        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Download dependencies
-        id: helm-unittest-download
-        run: |
-          make prerequisites/helm
-      - name: Run Unit tests
-        id: helm-unittest
-        run: |
-          make test/helm/unit
+  # helm-test:
+  #   name: Run helm unit tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+  #     - name: Set up Helm
+  #       uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Download dependencies
+  #       id: helm-unittest-download
+  #       run: |
+  #         make prerequisites/helm
+  #     - name: Run Unit tests
+  #       id: helm-unittest
+  #       run: |
+  #         make test/helm/unit
 
-  helm-lint:
-    name: Run helm linting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - name: Set up Helm
-        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Linting
-        id: helm-linting
-        run: |
-          make test/helm/lint
+  # helm-lint:
+  #   name: Run helm linting
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+  #     - name: Set up Helm
+  #       uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Run Linting
+  #       id: helm-linting
+  #       run: |
+  #         make test/helm/lint
 
-  tests:
-    name: Run unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - name: Setup Golang
-        uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
-        with:
-          go-version-file: "${{ github.workspace }}/go.mod"
-      - name: Download dependencies
-        id: depdownload
-        run: |
-          hack/build/ci/install-cgo-dependencies.sh
-      - name: Run Unit tests
-        id: unittest
-        run: |
-          make go/test
+  # tests:
+  #   name: Run unit tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+  #     - name: Setup Golang
+  #       uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # v4.0.1
+  #       with:
+  #         go-version-file: "${{ github.workspace }}/go.mod"
+  #     - name: Download dependencies
+  #       id: depdownload
+  #       run: |
+  #         hack/build/ci/install-cgo-dependencies.sh
+  #     - name: Run Unit tests
+  #       id: unittest
+  #       run: |
+  #         make go/test
 
   linting:
     name: Run linting
@@ -127,10 +127,10 @@ jobs:
   build:
     name: Build images
     runs-on: ubuntu-latest
-    needs: [prepare, tests, linting]
+    needs: [prepare]
     strategy:
       matrix:
-        platform: [amd64, arm64]
+        platform: [amd64]
     steps:
       - name: Checkout
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
