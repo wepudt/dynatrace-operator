@@ -24,7 +24,7 @@ metadata:
       ]
     capabilities: Deep Insights
     categories: Monitoring,Logging & Tracing,OpenShift Optional
-    containerImage: quay.io/dynatrace/dynatrace-operator
+    containerImage: ghcr.io/dynatrace/dynatrace-operator
     operators.operatorframework.io/builder: operator-sdk-v1.3.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
     repository: https://github.com/Dynatrace/dynatrace-operator
@@ -247,7 +247,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.name
-                image: quay.io/dynatrace/dynatrace-operator:v0.1.0
+                image: ghcr.io/dynatrace/dynatrace-operator:v0.1.0
                 imagePullPolicy: Always
                 name: dynatrace-operator
                 resources:
