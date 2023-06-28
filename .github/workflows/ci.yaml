@@ -150,7 +150,7 @@ jobs:
     needs: [prepare, build]
     strategy:
       matrix:
-        platform: [amd64, arm64]
+        platform: [amd64]
     if: ${{ !github.event.pull_request.head.repo.fork }}
     steps:
       - name: Checkout
@@ -175,6 +175,9 @@ jobs:
     name: Create manifest
     needs: [prepare, push]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     env:
       COMBINED: ${{ github.ref_protected }}
     if: ${{ !github.event.pull_request.head.repo.fork }}
