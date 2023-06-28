@@ -69,7 +69,7 @@ jobs:
           username: GCR_USERNAME
           password: GCR_JSON_KEY
         - registry: dockerhub
-          url: quay.io
+          url: ghcr.io
           repository: DOCKERHUB_REPOSITORY
           username: DOCKERHUB_USERNAME
           password: DOCKERHUB_PASSWORD
@@ -110,7 +110,7 @@ jobs:
     needs: [prepare, build]
     runs-on: ubuntu-latest
     env:
-      SCAN_REGISTRY: "quay.io"
+      SCAN_REGISTRY: "ghcr.io"
     steps:
       - name: Checkout
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2

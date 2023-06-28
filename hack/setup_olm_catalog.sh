@@ -24,11 +24,11 @@ fi
 
 pushd config/olm/"${PLATFORM}"
 
-$CONTAINER_CLI build -f bundle-"${VERSION}".Dockerfile . -t quay.io/dynatrace/olm_catalog_tests:"${TAG}"
-$CONTAINER_CLI push quay.io/dynatrace/olm_catalog_tests:"${TAG}"
-opm index add --container-tool $CONTAINER_CLI --bundles quay.io/dynatrace/olm_catalog_tests:"${TAG}" --tag quay.io/dynatrace/olm_index_tests:"${TAG}"
-# if you want to add an existing index, append:  --from-index quay.io/dynatrace/olm_index_tests:prev-tag
-$CONTAINER_CLI push quay.io/dynatrace/olm_index_tests:"${TAG}"
+$CONTAINER_CLI build -f bundle-"${VERSION}".Dockerfile . -t ghcr.io/dynatrace/olm_catalog_tests:"${TAG}"
+$CONTAINER_CLI push ghcr.io/dynatrace/olm_catalog_tests:"${TAG}"
+opm index add --container-tool $CONTAINER_CLI --bundles ghcr.io/dynatrace/olm_catalog_tests:"${TAG}" --tag ghcr.io/dynatrace/olm_index_tests:"${TAG}"
+# if you want to add an existing index, append:  --from-index ghcr.io/dynatrace/olm_index_tests:prev-tag
+$CONTAINER_CLI push ghcr.io/dynatrace/olm_index_tests:"${TAG}"
 
 
 cat <<EOF | $KUBERNETES_CLI apply -f -
@@ -41,7 +41,7 @@ cat <<EOF | $KUBERNETES_CLI apply -f -
           app.kubernetes.io/name: dynatrace-operator
     spec:
         sourceType: grpc
-        image: quay.io/dynatrace/olm_index_tests:${TAG}
+        image: ghcr.io/dynatrace/olm_index_tests:${TAG}
 EOF
 
 if [ "${CREATE_SUBSCRIPTION}" == true ]; then

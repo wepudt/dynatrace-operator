@@ -41,7 +41,7 @@ if [ -n "${BUNDLE_DEFAULT_CHANNEL}" ]; then
 fi
 
 "${OPERATOR_SDK}" generate kustomize manifests -q --apis-dir ./src/api/
-(cd "config/deploy/${PLATFORM}" && ${KUSTOMIZE} edit set image quay.io/dynatrace/dynatrace-operator:snapshot="${OLM_IMAGE}")
+(cd "config/deploy/${PLATFORM}" && ${KUSTOMIZE} edit set image ghcr.io/dynatrace/dynatrace-operator:snapshot="${OLM_IMAGE}")
 "${KUSTOMIZE}" build "config/olm/${PLATFORM}" | "${OPERATOR_SDK}" generate bundle --overwrite --version "${VERSION}" "${SDK_PARAMS[@]}"
 "${OPERATOR_SDK}" bundle validate ./bundle
 
