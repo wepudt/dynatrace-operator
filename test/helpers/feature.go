@@ -20,6 +20,7 @@ const (
 	LevelTeardown
 )
 
+// test trigger here
 func ToFeatureFunc(envFunc env.Func, isFatal bool) features.Func {
 	return func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 		var err error
