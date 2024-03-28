@@ -1,0 +1,44 @@
+name: research-run-e2e-on-release
+
+on:
+  push:
+    branches:
+      - release-*
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    name: Run script
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+      - name: Run script
+        id: run
+        run: |
+          echo "--- latestReleaseBranch"
+          latestReleaseBranch="$(git branch -r --list 'origin/release-*' | sort --version-sort | tail -n 1 | tr -d ' ')"
+          echo "$latestReleaseBranch"
+          echo "---"
+
+          echo "--- current branch"
+          echo "origin/${{ github.ref_name }}"
+          echo "---"
+
+          if [ "$latestReleaseBranch" != "origin/${{ github.ref_name }}" ]; 
+          then
+            echo "older branch - nothing to do"
+            exit 0
+          else
+            echo "changes on current release branch- run e2e"
+            echo "RUN_E2E_TESTS=true" >> $GITHUB_ENV
+          fi
+      - name: "run e2e"
+        id: test
+        if: env.RUN_E2E_TESTS == 'true'
+        run: |
+          echo "RUN_E2E_TESTS was found true -> executing e2e tests"
