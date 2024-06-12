@@ -31,11 +31,11 @@ jobs:
     - operator-e2e
     steps:
     - name: Checkout workflow scripts from ref branch
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       with:
         path: ref
     - name: Checkout target branch
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       with:
         ref: ${{ github.event.inputs.target || 'main' }}
         path: target
@@ -82,11 +82,11 @@ jobs:
     - operator-e2e
     steps:
     - name: Checkout workflow scripts from ref branch
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       with:
         path: ref
     - name: Checkout target branch
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       with:
         ref: ${{ github.event.inputs.target || 'main' }}
         path: target
